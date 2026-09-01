@@ -106,17 +106,18 @@ header h1{font-size:var(--font-size-page-title);letter-spacing:.3px}
 .gcard .gstat.liq .gval{color:var(--rojo)}
 .gcard .gstat .gval.gantes-val{color:var(--mut);text-decoration:line-through;font-weight:700}
 .gcard .gstat .glabel{display:block;font-size:var(--font-size-caption);color:var(--mut);margin-top:2px}
-.gcard .gfoot{margin-top:auto}
-.gcard .gfoot .add-col{width:100%}
+.gcard .gfoot{margin-top:auto;display:flex;flex-direction:column;gap:6px}
 .gcard .gfoot .btn-add{width:100%;padding:10px}
+.gcard .gfoot .btn-offer,.gcard .gfoot .btn-oferta-chip{width:100%;white-space:normal;line-height:1.2}
 .gcard .gfoot .qtybox{width:100%;justify-content:center}
 .gcard .gfoot .qtybox input{flex:1;max-width:60px}
-.add-row{display:flex;gap:6px}
-.add-row .btn-add{flex:1}
-.add-col{display:flex;flex-direction:column;gap:6px}
-.btn-add-all{background:#fff;border:1px solid var(--cyan-500);color:var(--cyan-500);border-radius:var(--radius);
+.cell-actions{display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap}
+.btn-offer{background:#fff;border:1px solid var(--cyan-500);color:var(--cyan-500);border-radius:var(--radius);
   padding:8px 12px;font-size:var(--font-size-caption);font-weight:600;cursor:pointer;white-space:nowrap}
-.btn-add-all:active{opacity:.7}
+.btn-offer:active{opacity:.7}
+.btn-oferta-chip{background:var(--cyan-50);border:1px solid var(--cyan-200);color:var(--cyan-700);border-radius:var(--radius);
+  padding:8px 12px;font-size:var(--font-size-caption);font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-oferta-chip:active{opacity:.7}
 table.cat{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;
   box-shadow:var(--shadow-card)}
 table.cat thead th{background:var(--cyan-50);text-align:left;font-size:var(--font-size-secondary);
@@ -175,6 +176,11 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 .cart-item .ci-delete svg{width:16px;height:16px}
 .cart-item .qtybox{justify-content:flex-end}
 .cart-empty{padding:30px 0;text-align:center;color:var(--mut);font-size:var(--font-size-secondary)}
+.cart-ofertas{padding:10px 18px;border-top:1px solid var(--border);flex-shrink:0;max-height:220px;overflow-y:auto}
+.cart-ofertas-title{font-size:var(--font-size-caption);font-weight:700;color:var(--mut);margin-bottom:6px}
+.cart-ofertas-note{font-weight:400}
+.cart-item-oferta{border-bottom:1px solid var(--border)}
+.cart-item-oferta:last-child{border-bottom:0}
 .cart-footer{padding:14px 18px;border-top:1px solid var(--border);background:var(--bg)}
 .cart-total{display:flex;justify-content:space-between;font-size:var(--font-size-heading);font-weight:700;margin-bottom:10px}
 .btn-primary{width:100%;background:var(--lime);border:0;border-radius:var(--radius);padding:12px;font-size:var(--font-size-body);
@@ -188,6 +194,16 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 .modal label{font-size:var(--font-size-secondary);color:var(--mut);display:block;margin-top:10px;margin-bottom:4px}
 .modal input{width:100%;padding:9px 10px;border:1px solid var(--border-strong);border-radius:var(--radius);font-size:var(--font-size-body)}
 .modal-actions{display:flex;gap:8px;margin-top:18px}
+.oferta-info{background:var(--bg);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;font-size:var(--font-size-secondary)}
+.oferta-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg);border-radius:var(--radius);padding:4px}
+.oferta-tab{flex:1;background:none;border:0;border-radius:var(--radius);padding:8px;font-size:var(--font-size-secondary);
+  font-weight:600;color:var(--mut);cursor:pointer}
+.oferta-tab.active{background:#fff;color:var(--cyan-600);box-shadow:var(--shadow-card)}
+.oferta-total-preview{margin-top:10px;font-size:var(--font-size-secondary);font-weight:700;color:var(--ink)}
+.oferta-info b{display:block;margin-bottom:4px}
+.oferta-meta{color:var(--mut);font-size:var(--font-size-caption);margin-top:2px}
+.btn-quitar-oferta{display:block;width:100%;background:none;border:0;color:var(--rojo);font-size:var(--font-size-caption);
+  font-weight:600;cursor:pointer;padding:10px 0 0;text-align:center}
 .modal-actions button{flex:1;padding:10px;border-radius:var(--radius);font-size:var(--font-size-body);cursor:pointer}
 .btn-cancel{background:var(--card);border:1px solid var(--border-strong);color:var(--ink);font-weight:600}
 .photo-modal{position:relative;background:transparent;padding:0;width:auto;max-width:92vw;max-height:88vh;display:flex}
@@ -322,6 +338,7 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 <div class="cart-panel" id="cartPanel">
   <div class="cart-header"><h2>Pedido actual</h2><button id="closeCart">✕</button></div>
   <div class="cart-items" id="cartItems"><div class="cart-empty">Aún no has agregado productos.</div></div>
+  <div class="cart-ofertas" id="cartOfertas" style="display:none"></div>
   <div class="cart-footer">
     <div class="cart-total"><span>Total</span><span id="cartTotal">₡0</span></div>
     <button class="btn-primary" id="btnCerrarPedido" disabled>Cerrar pedido</button>
@@ -343,6 +360,37 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
       <button class="btn-cancel" id="btnCancelModal">Cancelar</button>
       <button class="btn-primary" id="btnGenerarPDF">Generar PDF</button>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="ofertaOverlay">
+  <div class="modal">
+    <h3>Hacer una oferta</h3>
+    <div id="ofertaInfo" class="oferta-info"></div>
+
+    <div class="oferta-tabs">
+      <button class="oferta-tab active" data-mode="lote" id="tabOfertaLote">Por lote completo</button>
+      <button class="oferta-tab" data-mode="unidad" id="tabOfertaUnidad">Por unidad</button>
+    </div>
+
+    <div id="ofertaLoteFields">
+      <label>Tu oferta total por el lote</label>
+      <input id="inpOfertaLote" placeholder="Ej. 50000" inputmode="numeric">
+    </div>
+
+    <div id="ofertaUnidadFields" style="display:none">
+      <label>Cantidad que deseas ofertar</label>
+      <input id="inpOfertaCantidad" placeholder="Ej. 10" inputmode="numeric">
+      <label>Tu oferta por unidad</label>
+      <input id="inpOfertaPrecioUnit" placeholder="Ej. 1000" inputmode="numeric">
+      <div class="oferta-total-preview" id="ofertaTotalPreview">Total ofertado: ₡0</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btnCancelOferta">Cancelar</button>
+      <button class="btn-primary" id="btnEnviarOferta">Hacer una oferta</button>
+    </div>
+    <button class="btn-quitar-oferta" id="btnQuitarOferta" style="display:none">Quitar esta oferta</button>
   </div>
 </div>
 
@@ -818,6 +866,7 @@ renderTabs();
 // ---- Carrito ----
 // cart se indexa por posición en PRODUCTS (no por código: un mismo código puede repetirse en los datos de origen)
 let cart = {}; // idx -> {qty}
+let ofertas = {}; // idx -> {monto} — ofertas por lote completo, pendientes de aprobación
 
 function getFiltered(){
   const out = [];
@@ -856,6 +905,13 @@ function loteBadge(dctoLote, inv){
   return `<span class="lote-chip" title="Descuento adicional del ${pct}% al comprar las ${fmt(inv)} unidades disponibles de este producto">-${pct}% x Lote completo</span>`;
 }
 
+function offerControl(idx, inv){
+  const o = ofertas[idx];
+  return o
+    ? `<button class="btn-oferta-chip" data-idx="${idx}" title="Editar o quitar tu oferta">Oferta: ${fmt(o.qty)} u. · ₡${fmt(o.monto)} ✎</button>`
+    : `<button class="btn-offer" data-idx="${idx}" title="Ofrece un precio por lote completo o por unidad">Hacer una oferta</button>`;
+}
+
 function rowHtml(idx){
   const p = PRODUCTS[idx];
   const [codigo, desc, marca, antes, liq, inv, fotoId, codigoAlt, dctoLote] = p;
@@ -866,10 +922,7 @@ function rowHtml(idx){
         <input type="text" inputmode="numeric" value="${qty}" data-idx="${idx}" class="qtyinput">
         <button data-act="inc" data-idx="${idx}">+</button>
        </div>`
-    : `<div class="add-row">
-        <button class="btn-add" data-idx="${idx}">Agregar</button>
-        <button class="btn-add-all" data-idx="${idx}" title="Agrega todo el lote disponible (${fmt(inv)})">Agregar todo</button>
-       </div>`;
+    : `<button class="btn-add" data-idx="${idx}">Agregar</button>`;
   const thumb = fotoId ? `<img class="thumb" src="${fotoUrl(fotoId)}" data-foto="${fotoId}" alt="" loading="lazy" onerror="this.remove()">` : '';
   return `<tr data-idx="${idx}">
     <td class="code">${codigoAlt}</td>
@@ -877,8 +930,8 @@ function rowHtml(idx){
     <td class="td-precio">
       <div><span class="precio-antes">₡${fmt(antes)}</span><span class="precio-liq">₡${fmt(liq)}</span></div>
     </td>
-    <td class="inv">Disponible: ${fmt(inv)}${loteBadge(dctoLote, inv)}</td>
-    <td>${qtyControls}</td>
+    <td class="inv">Disponible: ${fmt(inv)}</td>
+    <td><div class="cell-actions">${qtyControls}${offerControl(idx, inv)}</div></td>
   </tr>`;
 }
 
@@ -892,10 +945,7 @@ function cardHtml(idx){
         <input type="text" inputmode="numeric" value="${qty}" data-idx="${idx}" class="qtyinput">
         <button data-act="inc" data-idx="${idx}">+</button>
        </div>`
-    : `<div class="add-col">
-        <button class="btn-add" data-idx="${idx}">Agregar</button>
-        <button class="btn-add-all" data-idx="${idx}" title="Agrega todo el lote disponible (${fmt(inv)})">Agregar todo</button>
-       </div>`;
+    : `<button class="btn-add" data-idx="${idx}">Agregar</button>`;
   const descuento = antes > 0 ? Math.round((1 - liq/antes) * 100) : 0;
   const imgHtml = fotoId
     ? `<img src="${fotoUrl(fotoId)}" data-foto="${fotoId}" alt="" loading="lazy" onerror="this.remove()">`
@@ -914,8 +964,7 @@ function cardHtml(idx){
         <div class="gstat liq"><span class="gval">₡${fmt(liq)}</span><span class="glabel">Ahora</span></div>
         <div class="gstat"><span class="gval">${fmt(inv)}</span><span class="glabel">Disponible</span></div>
       </div>
-      ${loteBadge(dctoLote, inv) ? `<div class="gfoot-lote">${loteBadge(dctoLote, inv)}</div>` : ''}
-      <div class="gfoot">${qtyControls}</div>
+      <div class="gfoot">${qtyControls}${offerControl(idx, inv)}</div>
     </div>
   </div>`;
 }
@@ -984,14 +1033,115 @@ function setQty(idx, qty){
   }
   updateCartUI();
   // refresca solo el elemento afectado en la vista activa
+  refreshProductUI(idx);
+}
+
+function refreshProductUI(idx){
   const row = tbody.querySelector(`tr[data-idx="${idx}"]`);
   if (row) row.outerHTML = rowHtml(idx);
   const card = gridWrap.querySelector(`.gcard[data-idx="${idx}"]`);
   if (card) card.outerHTML = cardHtml(idx);
 }
 
+// ---- Oferta (por lote completo o por unidad) ----
+let ofertaIdx = null;
+let ofertaModo = 'lote';
+const ofertaOverlay = $('#ofertaOverlay');
+const ofertaInfoEl = $('#ofertaInfo');
+const inpOfertaLoteEl = $('#inpOfertaLote');
+const inpOfertaCantidadEl = $('#inpOfertaCantidad');
+const inpOfertaPrecioUnitEl = $('#inpOfertaPrecioUnit');
+const ofertaTotalPreviewEl = $('#ofertaTotalPreview');
+const ofertaLoteFieldsEl = $('#ofertaLoteFields');
+const ofertaUnidadFieldsEl = $('#ofertaUnidadFields');
+const btnQuitarOferta = $('#btnQuitarOferta');
+
+function setOfertaModo(modo){
+  ofertaModo = modo;
+  $('#tabOfertaLote').classList.toggle('active', modo === 'lote');
+  $('#tabOfertaUnidad').classList.toggle('active', modo === 'unidad');
+  ofertaLoteFieldsEl.style.display = modo === 'lote' ? '' : 'none';
+  ofertaUnidadFieldsEl.style.display = modo === 'unidad' ? '' : 'none';
+}
+$('#tabOfertaLote').addEventListener('click', () => setOfertaModo('lote'));
+$('#tabOfertaUnidad').addEventListener('click', () => setOfertaModo('unidad'));
+
+function updateOfertaPreview(){
+  const cantidad = parseInt(inpOfertaCantidadEl.value, 10) || 0;
+  const precioUnit = parseInt(String(inpOfertaPrecioUnitEl.value).replace(/[^\d]/g, ''), 10) || 0;
+  ofertaTotalPreviewEl.textContent = 'Total ofertado: ₡' + fmt(cantidad * precioUnit);
+}
+inpOfertaCantidadEl.addEventListener('input', updateOfertaPreview);
+inpOfertaPrecioUnitEl.addEventListener('input', updateOfertaPreview);
+
+function openOfertaModal(idx){
+  ofertaIdx = idx;
+  const p = PRODUCTS[idx];
+  const [, desc, , antes, liq, inv, , codigoAlt] = p;
+  ofertaInfoEl.innerHTML = `<b>${desc}</b>
+    <div class="oferta-meta">Código ${codigoAlt} · ${fmt(inv)} unidades disponibles</div>
+    <div class="oferta-meta">Precio unitario: <b>₡${fmt(liq)}</b></div>
+    <div class="oferta-meta">Precio de referencia por el lote completo: <b>₡${fmt(liq * inv)}</b></div>`;
+  const existing = ofertas[idx];
+  if (existing && existing.qty === inv){
+    setOfertaModo('lote');
+    inpOfertaLoteEl.value = existing.monto;
+  } else if (existing){
+    setOfertaModo('unidad');
+    inpOfertaCantidadEl.value = existing.qty;
+    inpOfertaPrecioUnitEl.value = Math.round(existing.monto / existing.qty);
+  } else {
+    setOfertaModo('lote');
+    inpOfertaLoteEl.value = '';
+    inpOfertaCantidadEl.value = '';
+    inpOfertaPrecioUnitEl.value = '';
+  }
+  updateOfertaPreview();
+  btnQuitarOferta.style.display = existing ? '' : 'none';
+  ofertaOverlay.classList.add('open');
+  setTimeout(() => inpOfertaLoteEl.focus(), 50);
+}
+function closeOfertaModal(){
+  ofertaOverlay.classList.remove('open');
+  ofertaIdx = null;
+}
+$('#btnCancelOferta').addEventListener('click', closeOfertaModal);
+ofertaOverlay.addEventListener('click', e => { if (e.target.id === 'ofertaOverlay') closeOfertaModal(); });
+
+$('#btnEnviarOferta').addEventListener('click', () => {
+  const inv = PRODUCTS[ofertaIdx][5];
+  let qty, monto;
+  if (ofertaModo === 'lote'){
+    qty = inv;
+    monto = parseInt(String(inpOfertaLoteEl.value).replace(/[^\d]/g, ''), 10);
+  } else {
+    qty = parseInt(inpOfertaCantidadEl.value, 10);
+    const precioUnit = parseInt(String(inpOfertaPrecioUnitEl.value).replace(/[^\d]/g, ''), 10);
+    monto = qty && precioUnit ? qty * precioUnit : 0;
+    if (qty && qty > inv){
+      alert(`Solo hay ${fmt(inv)} unidades disponibles de este producto.`);
+      return;
+    }
+  }
+  if (!qty || qty <= 0 || !monto || monto <= 0){
+    alert('Por favor completa la cantidad y el monto de tu oferta.');
+    return;
+  }
+  ofertas[ofertaIdx] = { qty, monto };
+  refreshProductUI(ofertaIdx);
+  updateCartUI();
+  closeOfertaModal();
+  toast('Oferta agregada al pedido ✓');
+});
+btnQuitarOferta.addEventListener('click', () => {
+  delete ofertas[ofertaIdx];
+  refreshProductUI(ofertaIdx);
+  updateCartUI();
+  closeOfertaModal();
+  toast('Oferta eliminada');
+});
+
 function openPhoto(fotoId){
-  $('#photoBig').src = fotoUrlBig(fotoId);
   $('#photoOverlay').classList.add('open');
 }
 function closePhoto(){
@@ -1017,12 +1167,9 @@ function handleCatalogClick(e){
     openPhoto(gimg.dataset.foto);
     return;
   }
-  const addAllBtn = e.target.closest('.btn-add-all');
-  if (addAllBtn){
-    const idx = addAllBtn.dataset.idx;
-    const inv = PRODUCTS[idx][5];
-    setQty(idx, inv);
-    toast('Lote completo agregado al pedido ✓');
+  const offerBtn = e.target.closest('.btn-offer, .btn-oferta-chip');
+  if (offerBtn){
+    openOfertaModal(offerBtn.dataset.idx);
     return;
   }
   const addBtn = e.target.closest('.btn-add');
@@ -1054,30 +1201,30 @@ function cartLines(){
     const p = PRODUCTS[idx];
     const qty = cart[idx].qty;
     const inv = p[5];
-    const dctoLote = p[8] || 0;
-    const loteAplica = dctoLote > 0 && inv > 0 && qty >= inv;
     const precioBase = p[4];
-    const precio = loteAplica ? Math.round(precioBase * (1 - dctoLote)) : precioBase;
-    return { idx, codigo: p[0], codigoAlt: p[7], desc: p[1], marca: p[2], precio, precioBase, qty, subtotal: precio*qty, foto: p[6], loteAplica, dctoLote };
+    const precio = precioBase;
+    return { idx, codigo: p[0], codigoAlt: p[7], desc: p[1], marca: p[2], precio, precioBase, qty, subtotal: precio*qty, foto: p[6] };
   });
 }
 
 function updateCartUI(){
   const lines = cartLines();
-  const count = lines.reduce((a,l) => a + l.qty, 0);
-  const total = lines.reduce((a,l) => a + l.subtotal, 0);
+  const ofertaIdxs = Object.keys(ofertas);
+  const ofertasTotal = ofertaIdxs.reduce((a, idx) => a + ofertas[idx].monto, 0);
+  const ofertasUnidades = ofertaIdxs.reduce((a, idx) => a + ofertas[idx].qty, 0);
+  const count = lines.reduce((a,l) => a + l.qty, 0) + ofertasUnidades;
+  const total = lines.reduce((a,l) => a + l.subtotal, 0) + ofertasTotal;
   $('#cartCount').textContent = count;
   $('#cartTotal').textContent = '₡' + fmt(total);
-  $('#btnCerrarPedido').disabled = lines.length === 0;
+  $('#btnCerrarPedido').disabled = lines.length === 0 && ofertaIdxs.length === 0;
 
   const itemsEl = $('#cartItems');
   if (lines.length === 0){
     itemsEl.innerHTML = '<div class="cart-empty">Aún no has agregado productos.</div>';
-    return;
-  }
+  } else {
   itemsEl.innerHTML = lines.map(l => `
     <div class="cart-item">
-      <div class="ci-name">${l.desc}<span class="ci-code">${l.codigoAlt}</span>${l.loteAplica ? `<span class="lote-chip">Lote completo -${Math.round(l.dctoLote*100)}%</span>` : ''}</div>
+      <div class="ci-name">${l.desc}<span class="ci-code">${l.codigoAlt}</span></div>
       <div class="ci-right">
         <div class="ci-top">
           <span class="ci-price">₡${fmt(l.subtotal)}</span>
@@ -1092,8 +1239,41 @@ function updateCartUI(){
         </div>
       </div>
     </div>`).join('');
+  }
+
+  const ofertasEl = $('#cartOfertas');
+  if (ofertaIdxs.length === 0){
+    ofertasEl.style.display = 'none';
+    ofertasEl.innerHTML = '';
+  } else {
+    ofertasEl.style.display = '';
+    ofertasEl.innerHTML = `<div class="cart-ofertas-title">Ofertas enviadas <span class="cart-ofertas-note">(nuestro equipo te contactará para confirmar)</span></div>` +
+      ofertaIdxs.map(idx => {
+        const p = PRODUCTS[idx];
+        return `<div class="cart-item cart-item-oferta">
+          <div class="ci-name">${p[1]}<span class="ci-code">${p[7]} · ${fmt(ofertas[idx].qty)} unidades</span></div>
+          <div class="ci-right">
+            <div class="ci-top">
+              <span class="ci-price">₡${fmt(ofertas[idx].monto)}</span>
+              <button class="ci-delete" data-idx="${idx}" title="Quitar oferta" aria-label="Quitar oferta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+  }
 }
 updateCartUI();
+
+$('#cartOfertas').addEventListener('click', e => {
+  const delBtn = e.target.closest('.ci-delete');
+  if (delBtn){
+    delete ofertas[delBtn.dataset.idx];
+    refreshProductUI(delBtn.dataset.idx);
+    updateCartUI();
+  }
+});
 
 $('#cartItems').addEventListener('click', e => {
   const delBtn = e.target.closest('.ci-delete');
@@ -1250,48 +1430,94 @@ async function generarPDF(nombre, cedula, telefono, correo){
   // Nota: la fuente estándar de jsPDF no incluye el glifo ₡ (lo sustituye por otro carácter),
   // por eso el PDF usa ¢ como aproximación; en pantalla sí se usa el símbolo correcto ₡.
   const rows = lines.map(l => [
-    l.codigoAlt, l.desc, String(l.qty),
-    l.loteAplica ? '-' + Math.round(l.dctoLote * 100) + '%' : '—',
-    '¢' + fmt(l.precioBase), '¢' + fmt(l.subtotal)
+    l.codigoAlt, l.desc, String(l.qty), '¢' + fmt(l.precioBase), '¢' + fmt(l.subtotal)
   ]);
-  const total = lines.reduce((a,l) => a + l.subtotal, 0);
+  const productsTotal = lines.reduce((a,l) => a + l.subtotal, 0);
+  const ofertaIdxs = Object.keys(ofertas);
+  const ofertasTotal = ofertaIdxs.reduce((a, idx) => a + ofertas[idx].monto, 0);
+  const totalGeneral = productsTotal + ofertasTotal;
 
   const tableFontSize = 9;
-  const wCodigo = 24, wCant = 20, wDcto = 26, wPrecio = 30, wSubtotal = 30;
+  const wCodigo = 24, wCant = 22, wPrecio = 32, wSubtotal = 32;
 
-  doc.autoTable({
-    startY: 70,
-    head: [['Código','Producto','Cantidad','% Descuento','Precio unitario','Subtotal']],
-    body: rows,
-    theme: 'plain',
-    styles: { fontSize: tableFontSize, cellPadding: { top: 4, bottom: 4, left: 3, right: 3 }, lineWidth: { bottom: 0.2 }, lineColor: [222, 226, 230] },
-    headStyles: { fillColor: BLUE, textColor: [255,255,255], fontStyle: 'bold', lineWidth: 0, cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 } },
-    columnStyles: {
-      0: {cellWidth: wCodigo}, 2: {cellWidth: wCant, halign:'right'}, 3: {cellWidth: wDcto, halign:'center'},
-      4: {cellWidth: wPrecio, halign:'right'}, 5: {cellWidth: wSubtotal, halign:'right'}
-    },
-    foot: [['','','','','Total', '¢' + fmt(total)]],
-    footStyles: { fillColor: BLUE, textColor: [255,255,255], fontStyle:'bold', halign:'right', lineWidth: 0, cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 } },
-    showFoot: 'lastPage',
-    margin: { top: 16, left: marginX, right: marginX, bottom: 18 },
-    didDrawPage: (data) => {
-      if (data.pageNumber > 1) drawContinuationHeader();
-      const footY = doc.internal.pageSize.getHeight() - 12;
-      doc.setDrawColor(222, 226, 230);
-      doc.setLineWidth(0.3);
-      doc.line(marginX, footY - 5, rightX, footY - 5);
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(8.5);
-      doc.setTextColor(140, 145, 155);
-      doc.text('Precios y cantidades sujetas a cambio sin previo aviso', pageW / 2, footY, { align: 'center' });
-    }
-  });
+  function drawPageFooter(data){
+    if (data.pageNumber > 1) drawContinuationHeader();
+    const footY = doc.internal.pageSize.getHeight() - 12;
+    doc.setDrawColor(222, 226, 230);
+    doc.setLineWidth(0.3);
+    doc.line(marginX, footY - 5, rightX, footY - 5);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(140, 145, 155);
+    doc.text('Precios y cantidades sujetas a cambio sin previo aviso', pageW / 2, footY, { align: 'center' });
+  }
+
+  let nextY = 70;
+  if (lines.length > 0){
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(20, 24, 33);
+    doc.text('Productos', marginX, nextY);
+    nextY += 5;
+    doc.autoTable({
+      startY: nextY,
+      head: [['Código','Producto','Cantidad','Precio unitario','Subtotal']],
+      body: rows,
+      theme: 'plain',
+      styles: { fontSize: tableFontSize, cellPadding: { top: 4, bottom: 4, left: 3, right: 3 }, lineWidth: { bottom: 0.2 }, lineColor: [222, 226, 230] },
+      headStyles: { fillColor: BLUE, textColor: [255,255,255], fontStyle: 'bold', lineWidth: 0, cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 } },
+      columnStyles: {
+        0: {cellWidth: wCodigo}, 2: {cellWidth: wCant, halign:'right'},
+        3: {cellWidth: wPrecio, halign:'right'}, 4: {cellWidth: wSubtotal, halign:'right'}
+      },
+      margin: { top: 16, left: marginX, right: marginX, bottom: 18 },
+      didDrawPage: drawPageFooter
+    });
+    nextY = doc.lastAutoTable.finalY + 14;
+  }
+
+  if (ofertaIdxs.length > 0){
+    if (nextY + 20 > doc.internal.pageSize.getHeight() - 20){ doc.addPage(); nextY = 24; }
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(190, 110, 10);
+    doc.text('Ofertas enviadas (nuestro equipo te contactará para confirmar)', marginX, nextY);
+    nextY += 5;
+    const ofertaRows = ofertaIdxs.map(idx => {
+      const p = PRODUCTS[idx];
+      return [p[7], p[1], fmt(ofertas[idx].qty), '¢' + fmt(ofertas[idx].monto)];
+    });
+    doc.autoTable({
+      startY: nextY,
+      head: [['Código','Producto','Cantidad','Oferta del cliente']],
+      body: ofertaRows,
+      theme: 'plain',
+      styles: { fontSize: tableFontSize, cellPadding: { top: 4, bottom: 4, left: 3, right: 3 }, lineWidth: { bottom: 0.2 }, lineColor: [222, 226, 230] },
+      headStyles: { fillColor: [190, 110, 10], textColor: [255,255,255], fontStyle: 'bold', lineWidth: 0, cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 } },
+      columnStyles: { 0: {cellWidth: wCodigo}, 2: {cellWidth: 38, halign:'right'}, 3: {cellWidth: 38, halign:'right'} },
+      margin: { top: 16, left: marginX, right: marginX, bottom: 18 },
+      didDrawPage: drawPageFooter
+    });
+    nextY = doc.lastAutoTable.finalY + 10;
+  }
+
+  if (lines.length > 0 || ofertaIdxs.length > 0){
+    if (nextY + 14 > doc.internal.pageSize.getHeight() - 20){ doc.addPage(); nextY = 24; }
+    doc.setFillColor(...BLUE);
+    doc.roundedRect(marginX, nextY, rightX - marginX, 12, 1.5, 1.5, 'F');
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    doc.text('Total general', marginX + 5, nextY + 8);
+    doc.text('¢' + fmt(totalGeneral), rightX - 5, nextY + 8, { align: 'right' });
+  }
 
   const safeNombre = nombre.replace(/[^a-z0-9]+/gi, '_').slice(0,40);
   doc.save(`Pedido_${pedidoNumero}_${safeNombre}.pdf`);
 
   // Limpia el pedido tras generar el PDF
   cart = {};
+  ofertas = {};
   updateCartUI();
   renderTable();
   cartPanel.classList.remove('open');
