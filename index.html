@@ -1371,7 +1371,12 @@ function toast(msg){
 function setQty(idx, qty){
   const p = PRODUCTS[idx];
   if (!p) return;
+  const inv = p[5];
   qty = Math.max(0, Math.floor(qty) || 0);
+  if (qty > inv){
+    qty = inv;
+    toast(`Solo hay ${fmt(inv)} unidades disponibles de este producto`);
+  }
   if (qty === 0){
     delete cart[idx];
   } else {
@@ -1418,6 +1423,16 @@ function updateOfertaPreview(){
   ofertaTotalPreviewEl.textContent = 'Total ofertado: ₡' + fmt(cantidad * precioUnit);
 }
 inpOfertaCantidadEl.addEventListener('input', updateOfertaPreview);
+inpOfertaCantidadEl.addEventListener('change', function(){
+  if (ofertaIdx === null) return;
+  const inv = PRODUCTS[ofertaIdx][5];
+  const val = parseInt(this.value, 10) || 0;
+  if (val > inv){
+    this.value = inv;
+    toast(`Solo hay ${fmt(inv)} unidades disponibles de este producto`);
+    updateOfertaPreview();
+  }
+});
 inpOfertaPrecioUnitEl.addEventListener('input', updateOfertaPreview);
 
 function openOfertaModal(idx){
@@ -1456,18 +1471,20 @@ ofertaOverlay.addEventListener('click', e => { if (e.target.id === 'ofertaOverla
 
 $('#btnEnviarOferta').addEventListener('click', () => {
   const inv = PRODUCTS[ofertaIdx][5];
-  let qty, monto;
+  let qty, monto, seAjusto = false;
   if (ofertaModo === 'lote'){
     qty = inv;
     monto = parseInt(String(inpOfertaLoteEl.value).replace(/[^\d]/g, ''), 10);
   } else {
     qty = parseInt(inpOfertaCantidadEl.value, 10);
+    if (qty && qty > inv){
+      qty = inv;
+      inpOfertaCantidadEl.value = inv;
+      seAjusto = true;
+    }
     const precioUnit = parseInt(String(inpOfertaPrecioUnitEl.value).replace(/[^\d]/g, ''), 10);
     monto = qty && precioUnit ? qty * precioUnit : 0;
-    if (qty && qty > inv){
-      alert(`Solo hay ${fmt(inv)} unidades disponibles de este producto.`);
-      return;
-    }
+    updateOfertaPreview();
   }
   if (!qty || qty <= 0 || !monto || monto <= 0){
     alert('Por favor complete la cantidad y el monto de su oferta.');
@@ -1477,7 +1494,9 @@ $('#btnEnviarOferta').addEventListener('click', () => {
   refreshProductUI(ofertaIdx);
   updateCartUI();
   closeOfertaModal();
-  toast('Oferta agregada al pedido ✓');
+  toast(seAjusto
+    ? `Solo hay ${fmt(inv)} unidades disponibles — oferta ajustada y agregada ✓`
+    : 'Oferta agregada al pedido ✓');
 });
 btnQuitarOferta.addEventListener('click', () => {
   delete ofertas[ofertaIdx];
