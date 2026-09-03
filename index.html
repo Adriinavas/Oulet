@@ -107,18 +107,21 @@ header h1{font-size:var(--font-size-page-title);letter-spacing:.3px}
 .cat-level2{padding-left:22px;font-size:var(--font-size-caption)}
 .cat-level3{padding-left:38px;font-size:var(--font-size-caption);color:var(--mut)}
 .cat-level3.active{color:var(--cyan-700)}
-.cat-arrow{width:12px;flex-shrink:0;color:var(--mut);font-size:10px}
+.cat-arrow{width:30px;height:30px;flex-shrink:0;color:var(--mut);display:flex;align-items:center;justify-content:center;margin:-6px -6px -6px 0;border-radius:50%}
+.cat-arrow:hover{background:var(--border)}
+.cat-arrow svg{width:15px;height:15px;transition:transform .15s;flex-shrink:0}
+.cat-arrow.open svg{transform:rotate(180deg)}
 .cat-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat-count{color:var(--mut);font-size:var(--font-size-micro);flex-shrink:0}
 .catSidebarOverlay{display:none}
 .filterBtn{display:none}
 
 @media(max-width:767px){
-  .catSidebar{display:none;position:fixed;inset:0;width:auto;z-index:9998;background:#fff;padding:16px;border-right:none;max-height:100vh}
+  .catSidebar{display:none;position:fixed;top:0;left:0;bottom:0;width:82%;max-width:300px;z-index:9998;background:#fff;padding:16px;border-right:none;height:100vh;height:100dvh;max-height:none;box-shadow:2px 0 24px rgba(0,0,0,.25)}
   .catSidebar.open{display:block}
   .catSidebarHead{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:16px;margin-bottom:14px}
   .catSidebarClose{background:none;border:0;font-size:18px;cursor:pointer;color:var(--ink)}
-  .catSidebarOverlay.open{display:block;position:fixed;inset:0;background:rgba(15,23,32,.4);z-index:9997}
+  .catSidebarOverlay.open{display:block;position:fixed;inset:0;height:100vh;height:100dvh;background:rgba(15,23,32,.4);z-index:9997}
   .filterBtn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);
     background:#fff;font-weight:600;font-size:var(--font-size-caption);cursor:pointer;color:var(--ink)}
 }
@@ -265,10 +268,16 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 /* Celular (vertical y horizontal) y tablets angostas: catálogo en tarjetas */
 @media(max-width:767px){
   table.cat thead{display:none}
-  table.cat, table.cat tbody, table.cat tr, table.cat td{display:block;width:100%}
-  table.cat tbody tr{padding:12px;border-bottom:8px solid var(--bg)}
-  table.cat tbody td{border:0;padding:4px 0}
-  table.cat td.td-precio{display:flex;justify-content:space-between;align-items:center}
+  table.cat, table.cat tbody{display:block;width:100%}
+  table.cat tbody tr{display:grid;grid-template-columns:1fr auto;column-gap:10px;row-gap:2px;padding:10px 12px;border-bottom:8px solid var(--bg)}
+  table.cat tbody td{display:block;border:0;padding:3px 0}
+  table.cat td.code{grid-column:1/-1;grid-row:1}
+  table.cat td.td-prod{grid-column:1/-1;grid-row:2}
+  table.cat td.td-precio{grid-column:1;grid-row:3;display:flex;align-items:center}
+  table.cat td.inv{grid-column:1;grid-row:4;text-align:left}
+  table.cat tbody td:last-child{grid-column:2;grid-row:3/5;align-self:center;justify-self:end}
+  table.cat tbody td:last-child .cell-actions{flex-direction:column;align-items:stretch;gap:6px}
+  table.cat tbody td:last-child .qtybox{width:auto}
   .thumb{width:52px;height:52px}
   .tab{width:118px;height:90px;padding:7px}
   .tab-logo{width:90px;height:56px}
@@ -289,6 +298,27 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
   .tab[data-marca="Tezza"] .tab-logo,
   .tab[data-marca="Garabito"] .tab-logo,
   .tab[data-marca="Kirby"] .tab-logo{width:100px;height:64px}
+
+  header{padding:12px 14px 10px;gap:8px}
+  header h1{font-size:16px;line-height:1.2}
+  .steps{flex-wrap:nowrap;gap:4px;margin-top:8px}
+  .step{gap:4px;flex:1;min-width:0}
+  .step-num{font-size:13px}
+  .step-icon{width:20px;height:20px}
+  .step-icon svg{width:10px;height:10px}
+  .step-label{font-size:8.5px;line-height:1.1}
+  .step-divider{display:none}
+}
+
+/* Cuadrícula: 2 columnas en celular, como EPA */
+@media(max-width:767px){
+  .grid-view{grid-template-columns:repeat(2,1fr);gap:8px;padding:10px 12px}
+  .gcard .gbody{padding:8px;gap:6px}
+  .gcard h3{font-size:12.5px}
+  .gcard .gcode{font-size:10.5px}
+  .gcard .gstat .gval{font-size:10.5px}
+  .gcard .gstat .glabel{font-size:9px}
+  .gcard .gfoot .btn-add,.gcard .gfoot .btn-offer,.gcard .gfoot .btn-oferta-chip{font-size:12px;padding:8px}
 }
 
 /* Celular en orientación horizontal: alto de pantalla reducido, se libera espacio vertical */
@@ -297,12 +327,12 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 }
 
 @media(max-width:380px){
-  header{flex-wrap:wrap}
-  header h1{font-size:28px}
-  .steps{gap:12px}
-  .step-num{font-size:26px}
-  .step-icon{width:36px;height:36px}
-  .step-icon svg{width:18px;height:18px}
+  header h1{font-size:14.5px}
+  .steps{gap:3px}
+  .step-num{font-size:12px}
+  .step-icon{width:18px;height:18px}
+  .step-icon svg{width:9px;height:9px}
+  .step-label{font-size:8px}
   .fab-stack{right:12px;bottom:12px;gap:8px}
   .cart-btn{padding:12px 16px}
   .wa-bubble{width:46px;height:46px}
@@ -1028,6 +1058,7 @@ const catSidebarEl = $('#catSidebar');
 const catSidebarOverlayEl = $('#catSidebarOverlay');
 
 function renderCatTree(){
+  const chevron = (open) => `<span class="cat-arrow ${open ? 'open' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></span>`;
   const tree = computeCategoryTree(idxForCatTree());
   const categoriasOrdenadas = Object.keys(tree).sort((a,b) => a.localeCompare(b, 'es', {sensitivity:'base'}));
   let html = `<div class="cat-node cat-root ${activeCategoria==='TODAS' ? 'active' : ''}" data-action="reset">Todas las categorías</div>`;
@@ -1036,8 +1067,7 @@ function renderCatTree(){
     const isExpanded = expandedCategoria === cat;
     const isActive = activeCategoria === cat && !activeSubcategoria;
     html += `<div class="cat-node cat-level1 ${isActive ? 'active' : ''}" data-cat="${escAttr(cat)}">
-      <span class="cat-arrow">${isExpanded ? '▾' : '▸'}</span>
-      <span class="cat-label">${cat}</span><span class="cat-count">(${catData.count})</span>
+      <span class="cat-label">${cat}</span><span class="cat-count">(${catData.count})</span>${chevron(isExpanded)}
     </div>`;
     if (isExpanded){
       const subs = Object.keys(catData.subs).sort((a,b) => a.localeCompare(b, 'es', {sensitivity:'base'}));
@@ -1046,8 +1076,7 @@ function renderCatTree(){
         const isSubExpanded = expandedSubcategoria === sub;
         const isSubActive = activeSubcategoria === sub && !activeFamilia;
         html += `<div class="cat-node cat-level2 ${isSubActive ? 'active' : ''}" data-cat="${escAttr(cat)}" data-sub="${escAttr(sub)}">
-          <span class="cat-arrow">${isSubExpanded ? '▾' : '▸'}</span>
-          <span class="cat-label">${sub}</span><span class="cat-count">(${subData.count})</span>
+          <span class="cat-label">${sub}</span><span class="cat-count">(${subData.count})</span>${chevron(isSubExpanded)}
         </div>`;
         if (isSubExpanded){
           const fams = Object.keys(subData.fams).sort((a,b) => a.localeCompare(b, 'es', {sensitivity:'base'}));
@@ -1104,25 +1133,52 @@ renderCatTree();
 catTreeEl.addEventListener('click', e => {
   const node = e.target.closest('.cat-node');
   if (!node) return;
+  const arrowHit = e.target.closest('.cat-arrow');
+
   if (node.dataset.action === 'reset'){
     activeCategoria = 'TODAS'; activeSubcategoria = null; activeFamilia = null;
     expandedCategoria = null; expandedSubcategoria = null;
-  } else if (node.classList.contains('cat-level1')){
+    onFilterChanged();
+    closeCatSidebar();
+    return;
+  }
+
+  if (node.classList.contains('cat-level1')){
     const cat = node.dataset.cat;
+    if (arrowHit){
+      expandedCategoria = (expandedCategoria === cat) ? null : cat;
+      expandedSubcategoria = null;
+      renderCatTree();
+      return;
+    }
     activeCategoria = cat; activeSubcategoria = null; activeFamilia = null;
-    expandedCategoria = (expandedCategoria === cat) ? null : cat;
-    expandedSubcategoria = null;
-  } else if (node.classList.contains('cat-level2')){
+    expandedCategoria = cat; expandedSubcategoria = null;
+    onFilterChanged();
+    closeCatSidebar();
+    return;
+  }
+
+  if (node.classList.contains('cat-level2')){
     const cat = node.dataset.cat, sub = node.dataset.sub;
+    if (arrowHit){
+      expandedSubcategoria = (expandedSubcategoria === sub) ? null : sub;
+      renderCatTree();
+      return;
+    }
     activeCategoria = cat; activeSubcategoria = sub; activeFamilia = null;
-    expandedSubcategoria = (expandedSubcategoria === sub) ? null : sub;
-  } else if (node.classList.contains('cat-level3')){
+    expandedSubcategoria = sub;
+    onFilterChanged();
+    closeCatSidebar();
+    return;
+  }
+
+  if (node.classList.contains('cat-level3')){
     activeCategoria = node.dataset.cat;
     activeSubcategoria = node.dataset.sub;
     activeFamilia = node.dataset.fam;
+    onFilterChanged();
     closeCatSidebar();
   }
-  onFilterChanged();
 });
 
 $('#searchInput').addEventListener('input', function(){
@@ -1176,7 +1232,7 @@ const tbody = $('#tbody');
 const tblwrap = $('#tblwrap');
 const gridWrap = $('#gridWrap');
 const MAX_RENDER = 400;
-let viewMode = 'tabla'; // 'tabla' | 'cuadricula'
+let viewMode = (window.innerWidth <= 767) ? 'cuadricula' : 'tabla'; // 'tabla' | 'cuadricula'
 
 function fotoUrl(fotoId){
   return `https://drive.google.com/thumbnail?id=${fotoId}&sz=w160`;
@@ -1282,13 +1338,17 @@ function renderTable(){
       (restoMsg ? `<div style="grid-column:1/-1;text-align:center;color:var(--mut);padding:14px;font-size:13px">${restoMsg}</div>` : '');
   }
 }
+function applyViewModeUI(){
+  $$('.vt-btn').forEach(b => b.classList.toggle('active', b.dataset.view === viewMode));
+  tblwrap.style.display = viewMode === 'tabla' ? '' : 'none';
+  gridWrap.style.display = viewMode === 'cuadricula' ? '' : 'none';
+}
+applyViewModeUI();
 renderTable();
 
 function setView(mode){
   viewMode = mode;
-  $$('.vt-btn').forEach(b => b.classList.toggle('active', b.dataset.view === mode));
-  tblwrap.style.display = mode === 'tabla' ? '' : 'none';
-  gridWrap.style.display = mode === 'cuadricula' ? '' : 'none';
+  applyViewModeUI();
   renderTable();
 }
 $('#viewToggle').addEventListener('click', e => {
