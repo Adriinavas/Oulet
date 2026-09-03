@@ -1428,6 +1428,7 @@ btnQuitarOferta.addEventListener('click', () => {
 });
 
 function openPhoto(fotoId){
+  $('#photoBig').src = fotoUrlBig(fotoId);
   $('#photoOverlay').classList.add('open');
 }
 function closePhoto(){
