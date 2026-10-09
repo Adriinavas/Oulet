@@ -79,7 +79,7 @@ header h1{font-size:var(--font-size-page-title);letter-spacing:.3px}
 /* Selección múltiple */
 .selall-label{display:inline-flex;align-items:center;gap:8px;font-size:var(--font-size-secondary);font-weight:600;color:var(--ink);cursor:pointer;user-select:none}
 .sel-chk{width:20px;height:20px;cursor:pointer;accent-color:var(--cyan-500,#0aa0dc);margin:0;flex-shrink:0}
-.btn-addsel{background:var(--lime);color:#fff;border:0;border-radius:var(--radius);padding:9px 16px;font-weight:700;font-size:var(--font-size-secondary);cursor:pointer}
+.btn-addsel{background:var(--lime);color:#fff;border:0;border-radius:var(--radius);padding:9px 16px;font-weight:700;font-size:16px;cursor:pointer}
 .btn-addsel:disabled{opacity:.45;cursor:not-allowed}
 table.cat th.th-addsel{text-align:left}
 table.cat th.th-addsel .btn-addsel{padding:7px 12px;font-size:var(--font-size-caption);white-space:nowrap}
@@ -103,7 +103,7 @@ table.cat tbody tr.is-sel{background:var(--cyan-50)}
 @media(max-width:767px){
   .bar .row1 .searchBox{flex:1 1 100%}
   .selall-label{font-size:13px;white-space:nowrap}
-  .btn-addsel{padding:8px 12px;font-size:13px;white-space:nowrap}
+  .btn-addsel{padding:8px 12px;font-size:16px;white-space:nowrap}
   .btn-addsel .hide-m{display:none}
 }
 .viewToggle{display:flex;border:1px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;flex:0 0 auto}
@@ -118,7 +118,7 @@ table.cat tbody tr.is-sel{background:var(--cyan-50)}
 
 .layout{display:flex;align-items:flex-start}
 .mainCol{flex:1;min-width:0}
-.catSidebar{width:260px;flex-shrink:0;padding:16px 14px;border-right:1px solid var(--border);position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto}
+.catSidebar{width:300px;flex-shrink:0;padding:16px 14px;border-right:1px solid var(--border);position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto}
 .catSidebarHead{display:none}
 .searchBox{position:relative;flex:1 1 360px;min-width:180px}
 .searchBox svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none;width:16px;height:16px}
@@ -129,20 +129,20 @@ table.cat tbody tr.is-sel{background:var(--cyan-50)}
 .catTreeTitle{font-weight:700;font-size:var(--font-size-secondary);color:var(--ink)}
 .clearFiltersBtn{background:none;border:0;color:var(--cyan-600);font-size:var(--font-size-caption);font-weight:600;cursor:pointer;padding:2px 0}
 .clearFiltersBtn:hover{text-decoration:underline}
-.catTree{font-size:var(--font-size-secondary)}
+.catTree{font-size:16px}
 .cat-node{display:flex;align-items:center;gap:6px;padding:7px 6px;border-radius:6px;cursor:pointer;color:var(--ink)}
 .cat-node:hover{background:var(--bg)}
 .cat-node.active{background:var(--cyan-50);color:var(--cyan-700);font-weight:700}
 .cat-root{font-weight:700;margin-bottom:4px}
-.cat-level2{padding-left:22px;font-size:var(--font-size-caption)}
-.cat-level3{padding-left:38px;font-size:var(--font-size-caption);color:var(--mut)}
+.cat-level2{padding-left:22px;font-size:16px}
+.cat-level3{padding-left:38px;font-size:16px;color:var(--mut)}
 .cat-level3.active{color:var(--cyan-700)}
 .cat-arrow{width:30px;height:30px;flex-shrink:0;color:var(--mut);display:flex;align-items:center;justify-content:center;margin:-6px -6px -6px 0;border-radius:50%}
 .cat-arrow:hover{background:var(--border)}
 .cat-arrow svg{width:15px;height:15px;transition:transform .15s;flex-shrink:0}
 .cat-arrow.open svg{transform:rotate(180deg)}
-.cat-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cat-count{color:var(--mut);font-size:var(--font-size-micro);flex-shrink:0}
+.cat-label{flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.25}
+.cat-count{color:var(--mut);font-size:14px;flex-shrink:0}
 .catSidebarOverlay{display:none}
 .filterBtn{display:none}
 
@@ -183,10 +183,10 @@ table.cat tbody tr.is-sel{background:var(--cyan-50)}
 .gcard .gfoot .qtybox input{flex:1;max-width:60px}
 .cell-actions{display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap}
 .btn-offer{background:#fff;border:1px solid var(--cyan-500);color:var(--cyan-500);border-radius:var(--radius);
-  padding:8px 12px;font-size:var(--font-size-caption);font-weight:600;cursor:pointer;white-space:nowrap}
+  padding:8px 12px;font-size:16px;font-weight:600;cursor:pointer;white-space:nowrap}
 .btn-offer:active{opacity:.7}
 .btn-oferta-chip{background:var(--cyan-50);border:1px solid var(--cyan-200);color:var(--cyan-700);border-radius:var(--radius);
-  padding:8px 12px;font-size:var(--font-size-caption);font-weight:700;cursor:pointer;white-space:nowrap}
+  padding:8px 12px;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
 .btn-oferta-chip:active{opacity:.7}
 table.cat{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;
   box-shadow:var(--shadow-card)}
@@ -210,7 +210,7 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 .qtybox{display:flex;align-items:center;gap:6px}
 .qtybox button{width:26px;height:26px;border-radius:var(--radius);border:1px solid var(--border-strong);background:var(--card);cursor:pointer;font-size:15px}
 .qtybox input{width:44px;text-align:center;border:1px solid var(--border-strong);border-radius:var(--radius);padding:4px 2px;font-size:16px}
-.btn-add{background:var(--lime);border:0;border-radius:var(--radius);padding:8px 16px;font-size:var(--font-size-secondary);
+.btn-add{background:var(--lime);border:0;border-radius:var(--radius);padding:8px 16px;font-size:16px;
   font-weight:600;cursor:pointer;color:#fff;white-space:nowrap}
 .btn-add:active{opacity:.7}
 .empty{padding:40px;text-align:center;color:var(--mut)}
@@ -350,7 +350,7 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
   .gcard .gcode{font-size:10.5px}
   .gcard .gstat .gval{font-size:10.5px}
   .gcard .gstat .glabel{font-size:9px}
-  .gcard .gfoot .btn-add,.gcard .gfoot .btn-offer,.gcard .gfoot .btn-oferta-chip{font-size:12px;padding:8px}
+  .gcard .gfoot .btn-add,.gcard .gfoot .btn-offer,.gcard .gfoot .btn-oferta-chip{font-size:16px;padding:8px 4px}
 }
 
 /* Celular en orientación horizontal: alto de pantalla reducido, se libera espacio vertical */
