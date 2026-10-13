@@ -1103,6 +1103,7 @@ function renderTabs(){
   $$('.tab').forEach(t => t.addEventListener('click', () => {
     activeMarca = t.dataset.marca;
     onFilterChanged();
+    scrollProductsToTop();
   }));
 }
 
@@ -1169,6 +1170,16 @@ function onFilterChanged(){
   renderTable();
 }
 
+// Al cambiar marca/categoría/subcategoría/familia, llevar la lista de productos al inicio
+function scrollProductsToTop(){
+  const main = document.querySelector('.mainCol');
+  if (!main) return;
+  const top = main.getBoundingClientRect().top + window.scrollY;
+  if (window.scrollY > top) window.scrollTo({ top, behavior: 'auto' });
+  const wrap = document.getElementById('tblwrap');
+  if (wrap && wrap.scrollHeight > wrap.clientHeight) wrap.scrollTop = 0;
+}
+
 function clearAllFilters(){
   activeMarca = 'TODAS';
   activeCategoria = 'TODAS'; activeSubcategoria = null; activeFamilia = null;
@@ -1178,6 +1189,7 @@ function clearAllFilters(){
   renderTabs();
   renderCatTree();
   renderTable();
+  scrollProductsToTop();
 }
 $('#btnClearFilters').addEventListener('click', clearAllFilters);
 
@@ -1193,6 +1205,7 @@ catTreeEl.addEventListener('click', e => {
     activeCategoria = 'TODAS'; activeSubcategoria = null; activeFamilia = null;
     expandedCategoria = null; expandedSubcategoria = null;
     onFilterChanged();
+    scrollProductsToTop();
     closeCatSidebar();
     return;
   }
@@ -1208,6 +1221,7 @@ catTreeEl.addEventListener('click', e => {
     activeCategoria = cat; activeSubcategoria = null; activeFamilia = null;
     expandedCategoria = cat; expandedSubcategoria = null;
     onFilterChanged();
+    scrollProductsToTop();
     closeCatSidebar();
     return;
   }
@@ -1222,6 +1236,7 @@ catTreeEl.addEventListener('click', e => {
     activeCategoria = cat; activeSubcategoria = sub; activeFamilia = null;
     expandedSubcategoria = sub;
     onFilterChanged();
+    scrollProductsToTop();
     closeCatSidebar();
     return;
   }
@@ -1231,6 +1246,7 @@ catTreeEl.addEventListener('click', e => {
     activeSubcategoria = node.dataset.sub;
     activeFamilia = node.dataset.fam;
     onFilterChanged();
+    scrollProductsToTop();
     closeCatSidebar();
   }
 });
