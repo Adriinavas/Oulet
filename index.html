@@ -1948,7 +1948,7 @@ async function generarPDF(nombre, cedula, telefono, correo){
   const totalGeneral = productsTotal + ofertasTotal;
 
   const tableFontSize = 9;
-  const wCodigo = 24, wCant = 22, wPrecio = 32, wSubtotal = 32;
+  const wCodigo = 24, wCant = 22, wPrecio = 36, wSubtotal = 32;
 
   function drawPageFooter(data){
     if (data.pageNumber > 1) drawContinuationHeader();
