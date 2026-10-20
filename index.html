@@ -183,6 +183,12 @@ table.cat tbody tr.is-sel{background:var(--cyan-50)}
 .gcard .gfoot .qtybox{width:100%;justify-content:center}
 .gcard .gfoot .qtybox input{flex:1;max-width:60px}
 .cell-actions{display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap}
+/* Escritorio: botones siempre en una línea; la columna de producto cede el espacio
+   (en pantallas más angostas se apilan para que la tabla no se salga del ancho) */
+@media(min-width:1200px){
+  table.cat .cell-actions{flex-wrap:nowrap}
+  table.cat tbody td:last-child, table.cat td.td-precio, table.cat td.inv{width:1%;white-space:nowrap}
+}
 .btn-offer{background:#fff;border:1px solid var(--cyan-500);color:var(--cyan-500);border-radius:var(--radius);
   padding:8px 12px;font-size:16px;font-weight:600;cursor:pointer;white-space:nowrap}
 .btn-offer:active{opacity:.7}
