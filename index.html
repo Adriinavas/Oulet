@@ -271,6 +271,9 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
 .modal h3{font-size:var(--font-size-heading);font-weight:600;margin-bottom:14px}
 .modal label{font-size:var(--font-size-secondary);color:var(--mut);display:block;margin-top:10px;margin-bottom:4px}
 .modal input{width:100%;padding:9px 10px;border:1px solid var(--border-strong);border-radius:var(--radius);font-size:var(--font-size-body)}
+.modal input.invalid{border-color:#d93025;box-shadow:0 0 0 2px rgba(217,48,37,.12)}
+.field-err{color:#d93025;font-size:var(--font-size-caption);margin-top:4px;min-height:0}
+.field-err:empty{display:none}
 .modal-actions{display:flex;gap:8px;margin-top:18px}
 .oferta-info{background:var(--bg);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;font-size:var(--font-size-secondary)}
 .oferta-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg);border-radius:var(--radius);padding:4px}
@@ -530,12 +533,16 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
     <h3>Datos del pedido</h3>
     <label>Nombre</label>
     <input id="inpNombre" placeholder="Nombre del cliente" autocomplete="off">
+    <div class="field-err" id="errNombre"></div>
     <label>Cédula Jurídica o Física</label>
-    <input id="inpCedula" placeholder="Ej. 3-101-123456">
+    <input id="inpCedula" placeholder="Ej. 3-101-123456" inputmode="numeric" maxlength="15">
+    <div class="field-err" id="errCedula"></div>
     <label>Teléfono</label>
-    <input id="inpTelefono" placeholder="Ej. 8888-8888" type="tel">
+    <input id="inpTelefono" placeholder="Ej. 8888-8888" type="tel" inputmode="numeric" maxlength="12">
+    <div class="field-err" id="errTelefono"></div>
     <label>Correo Electrónico</label>
-    <input id="inpCorreo" placeholder="correo@ejemplo.com" type="email">
+    <input id="inpCorreo" placeholder="correo@ejemplo.com" type="email" inputmode="email" autocomplete="email">
+    <div class="field-err" id="errCorreo"></div>
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelModal">Cancelar</button>
       <button class="btn-primary" id="btnGenerarPDF">Generar PDF</button>
@@ -1819,15 +1826,55 @@ const inpCedulaEl = $('#inpCedula');
 const inpTelefonoEl = $('#inpTelefono');
 const inpCorreoEl = $('#inpCorreo');
 
+// ---- Validación del formulario ----
+// Cédula y teléfono: solo números (se permiten guiones como separador)
+function soloNumerosYGuiones(el){
+  el.addEventListener('input', () => {
+    const limpio = el.value.replace(/[^0-9-]/g, '').replace(/-{2,}/g, '-');
+    if (limpio !== el.value) el.value = limpio;
+    clearErr(el);
+  });
+}
+soloNumerosYGuiones(inpCedulaEl);
+soloNumerosYGuiones(inpTelefonoEl);
+inpNombreEl.addEventListener('input', () => clearErr(inpNombreEl));
+inpCorreoEl.addEventListener('input', () => clearErr(inpCorreoEl));
+
+const ERR_ID = { inpNombre:'errNombre', inpCedula:'errCedula', inpTelefono:'errTelefono', inpCorreo:'errCorreo' };
+function setErr(el, msg){ el.classList.add('invalid'); $('#' + ERR_ID[el.id]).textContent = msg; }
+function clearErr(el){ el.classList.remove('invalid'); $('#' + ERR_ID[el.id]).textContent = ''; }
+
+const RE_CORREO = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+function validarFormulario(){
+  const nombre = inpNombreEl.value.trim();
+  const cedulaDig = inpCedulaEl.value.replace(/-/g, '');
+  const telDig = inpTelefonoEl.value.replace(/-/g, '');
+  const correo = inpCorreoEl.value.trim();
+  let primero = null;
+  const fallo = (el, msg) => { setErr(el, msg); if (!primero) primero = el; };
+  [inpNombreEl, inpCedulaEl, inpTelefonoEl, inpCorreoEl].forEach(clearErr);
+
+  if (!nombre) fallo(inpNombreEl, 'Ingrese el nombre del cliente.');
+
+  if (!cedulaDig) fallo(inpCedulaEl, 'Ingrese la cédula jurídica o física.');
+  else if (!/^\d{9,12}$/.test(cedulaDig)) fallo(inpCedulaEl, 'La cédula debe tener solo números (entre 9 y 12 dígitos).');
+
+  if (!telDig) fallo(inpTelefonoEl, 'Ingrese el teléfono.');
+  else if (!/^\d{8}$/.test(telDig)) fallo(inpTelefonoEl, 'El teléfono debe tener 8 dígitos, solo números.');
+
+  if (!correo) fallo(inpCorreoEl, 'Ingrese el correo electrónico.');
+  else if (!RE_CORREO.test(correo)) fallo(inpCorreoEl, 'Ingrese un correo válido, por ejemplo nombre@empresa.com.');
+
+  if (primero) primero.focus();
+  return !primero;
+}
+
 $('#btnGenerarPDF').addEventListener('click', async () => {
   const nombre = inpNombreEl.value.trim();
   const cedula = inpCedulaEl.value.trim();
   const telefono = inpTelefonoEl.value.trim();
   const correo = inpCorreoEl.value.trim();
-  if (!nombre || !cedula){
-    alert('Por favor completa el nombre y la cédula jurídica o física.');
-    return;
-  }
+  if (!validarFormulario()) return;
   const btnPdf = $('#btnGenerarPDF');
   const btnPdfTexto = btnPdf.textContent;
   btnPdf.disabled = true;
