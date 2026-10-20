@@ -203,6 +203,7 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
   background:var(--cyan-50);border-radius:var(--radius);padding:2px 7px;margin-left:8px;vertical-align:middle}
 .precio-antes{text-decoration:line-through;color:var(--mut);font-size:var(--font-size-secondary);display:block}
 .precio-liq{font-weight:700;color:var(--rojo);font-size:var(--font-size-body)}
+.ivi{font-size:.72em;font-weight:600;letter-spacing:.02em;white-space:nowrap}
 .inv{font-size:var(--font-size-secondary);color:var(--mut)}
 .lote-chip{display:inline-block;font-size:var(--font-size-micro);font-weight:700;letter-spacing:var(--ls-micro);color:var(--cyan-700);
   background:var(--cyan-50);border:1px solid var(--cyan-200);border-radius:var(--radius-pill);padding:3px 9px;margin-left:6px;
@@ -483,7 +484,7 @@ table.cat tbody tr:hover{background:var(--cyan-50)}
       </div>
     </div>
 
-    <div class="img-note" id="imgNote">Imágenes referenciales · Precios incluyen IVA</div>
+    <div class="img-note" id="imgNote">Imágenes referenciales · Precios incluyen impuestos</div>
     <div class="tblwrap" id="tblwrap">
       <table class="cat">
         <thead><tr>
@@ -1354,7 +1355,7 @@ function rowHtml(idx){
     <td class="code">${codigoAlt}</td>
     <td class="td-prod"><div class="prod-row">${thumb}<div class="prod-text">${desc}${activeMarca==='TODAS' ? `<span class="marca-chip">${marca}</span>` : ''}</div></div></td>
     <td class="td-precio">
-      <div>${antes > 0 ? `<span class="precio-antes">₡${fmt(antes)}</span>` : ''}<span class="precio-liq">₡${fmt(liq)}</span></div>
+      <div>${antes > 0 ? `<span class="precio-antes">₡${fmt(antes)} <span class="ivi">IVI</span></span>` : ''}<span class="precio-liq">₡${fmt(liq)} <span class="ivi">IVI</span></span></div>
     </td>
     <td class="inv">Disponible: ${fmt(inv)}</td>
     <td><div class="cell-actions">${qtyControls}${offerControl(idx, inv)}</div></td>
@@ -1388,8 +1389,8 @@ function cardHtml(idx){
       <h3 title="${desc.replace(/"/g,'&quot;')}">${desc}</h3>
       <div class="gcode">Código ${codigoAlt}</div>
       <div class="gstats">
-        ${antes > 0 ? `<div class="gstat"><span class="gval gantes-val">₡${fmt(antes)}</span><span class="glabel">Antes</span></div>` : ''}
-        <div class="gstat liq"><span class="gval">₡${fmt(liq)}</span><span class="glabel">Ahora</span></div>
+        ${antes > 0 ? `<div class="gstat"><span class="gval gantes-val">₡${fmt(antes)} <span class="ivi">IVI</span></span><span class="glabel">Antes</span></div>` : ''}
+        <div class="gstat liq"><span class="gval">₡${fmt(liq)} <span class="ivi">IVI</span></span><span class="glabel">Ahora</span></div>
         <div class="gstat"><span class="gval">${fmt(inv)}</span><span class="glabel">Disponible</span></div>
       </div>
       <div class="gfoot">${qtyControls}${offerControl(idx, inv)}</div>
@@ -1964,7 +1965,7 @@ async function generarPDF(nombre, cedula, telefono, correo){
     nextY += 5;
     doc.autoTable({
       startY: nextY,
-      head: [['Código','Producto','Cantidad','Precio unitario','Subtotal']],
+      head: [['Código','Producto','Cantidad','Precio unitario IVI','Subtotal']],
       body: rows,
       theme: 'plain',
       styles: { fontSize: tableFontSize, cellPadding: { top: 4, bottom: 4, left: 3, right: 3 }, lineWidth: { bottom: 0.2 }, lineColor: [222, 226, 230] },
